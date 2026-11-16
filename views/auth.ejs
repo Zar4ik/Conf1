@@ -1,0 +1,125 @@
+<%- include('header') %>
+
+<%
+  const currentMode = typeof mode !== 'undefined' ? mode : 'login';
+  const flashType = (typeof flash !== 'undefined' && flash &&
+                     ['success','danger','warning','info'].includes(flash.type))
+                     ? flash.type : 'info';
+  const v = key => (typeof form !== 'undefined' && form && form[key]) || '';
+%>
+
+<div class="row justify-content-center">
+  <div class="col-md-6 col-12">
+    <div class="card">
+      <div class="card-body">
+
+        <% if (typeof flash !== 'undefined' && flash) { %>
+          <div class="alert alert-<%= flashType %>"><%= flash.text %></div>
+        <% } %>
+
+        <ul class="nav nav-tabs mb-3" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link <%= currentMode === 'register' ? 'active' : '' %>"
+                    data-bs-toggle="tab" data-bs-target="#register-tab"
+                    type="button" role="tab">Регистрация</button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link <%= currentMode === 'login' ? 'active' : '' %>"
+                    data-bs-toggle="tab" data-bs-target="#login-tab"
+                    type="button" role="tab">Вход</button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+
+          <!-- ===== Регистрация ===== -->
+          <div class="tab-pane fade <%= currentMode === 'register' ? 'show active' : '' %>"
+               id="register-tab" role="tabpanel">
+
+            <% if (currentMode === 'register' && typeof errors !== 'undefined' && errors && errors.length) { %>
+              <div class="alert alert-danger">
+                <ul class="mb-0">
+                  <% errors.forEach(e => { %><li><%= e %></li><% }) %>
+                </ul>
+              </div>
+            <% } %>
+
+            <form method="POST" action="/register">
+              <div class="mb-3">
+                <label class="form-label" for="reg-login">Логин</label>
+                <input type="text" class="form-control" id="reg-login" name="login"
+                       value="<%= v('login') %>" autocomplete="username"
+                       placeholder="латиница и цифры, минимум 6 символов" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="reg-password">Пароль</label>
+                <input type="password" class="form-control" id="reg-password" name="password"
+                       autocomplete="new-password" minlength="8"
+                       placeholder="минимум 8 символов" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="reg-fio">ФИО</label>
+                <input type="text" class="form-control" id="reg-fio" name="fio"
+                       value="<%= v('fio') %>" autocomplete="name"
+                       placeholder="Иванов Иван Иванович" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="reg-phone">Телефон</label>
+                <input type="text" class="form-control" id="reg-phone" name="phone"
+                       value="<%= v('phone') %>" autocomplete="tel"
+                       placeholder="8(999)123-45-67" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="reg-email">Email</label>
+                <input type="email" class="form-control" id="reg-email" name="email"
+                       value="<%= v('email') %>" autocomplete="email"
+                       placeholder="user@example.com" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Создать пользователя</button>
+            </form>
+
+            <p class="mt-3 text-center">
+              Уже есть аккаунт?
+              <button class="btn btn-link p-0" data-bs-toggle="tab" data-bs-target="#login-tab" type="button">
+                Войти
+              </button>
+            </p>
+          </div>
+
+          <!-- ===== Вход ===== -->
+          <div class="tab-pane fade <%= currentMode === 'login' ? 'show active' : '' %>"
+               id="login-tab" role="tabpanel">
+
+            <% if (currentMode === 'login' && typeof error !== 'undefined' && error) { %>
+              <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+
+            <form method="POST" action="/login">
+              <div class="mb-3">
+                <label class="form-label" for="login-login">Логин</label>
+                <input type="text" class="form-control" id="login-login" name="login"
+                       value="<%= v('login') %>" autocomplete="username" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="login-password">Пароль</label>
+                <input type="password" class="form-control" id="login-password" name="password"
+                       autocomplete="current-password" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Войти</button>
+            </form>
+
+            <p class="mt-3 text-center">
+              Ещё не зарегистрированы?
+              <button class="btn btn-link p-0" data-bs-toggle="tab" data-bs-target="#register-tab" type="button">
+                Регистрация
+              </button>
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %>

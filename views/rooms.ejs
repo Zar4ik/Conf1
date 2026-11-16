@@ -1,0 +1,64 @@
+<%- include('header') %>
+
+<%
+  const roomList = Array.isArray(rooms) ? rooms : [];
+  const typeList = Array.isArray(types)
+    ? types
+    : [...new Set(roomList.map(r => r.type))].filter(Boolean);
+
+  let currentType = (typeof activeType !== 'undefined') ? activeType : null;
+  if (currentType === null && typeof currentPath !== 'undefined' && currentPath) {
+    const m = currentPath.match(/^\/rooms\/type\/(.+)$/);
+    if (m) currentType = decodeURIComponent(m[1]);
+  }
+
+  const typeUrl  = t => '/rooms/type/' + encodeURIComponent(t);
+  const isAuthed = !!(typeof session !== 'undefined' && session && session.userId);
+%>
+
+<h1 class="mb-4">Помещения</h1>
+
+<p class="text-muted">
+  Всего помещений: <b><%= roomList.length %></b>
+  <% if (currentType) { %> — тип: <b><%= currentType %></b><% } %>
+</p>
+
+<div class="mb-3">
+  <a href="/rooms"
+     class="btn btn-sm <%= currentType ? 'btn-outline-primary' : 'btn-primary' %>">Все</a>
+  <% typeList.forEach(t => { %>
+    <a href="<%= typeUrl(t) %>"
+       class="btn btn-sm <%= currentType === t ? 'btn-primary' : 'btn-outline-primary' %>">
+      <%= t %>
+    </a>
+  <% }) %>
+</div>
+
+<% if (roomList.length === 0) { %>
+  <div class="alert alert-info">
+    Помещения не найдены<% if (currentType) { %> для типа «<%= currentType %>»<% } %>.
+    <% if (currentType) { %><a href="/rooms" class="alert-link">Показать все</a><% } %>
+  </div>
+<% } %>
+
+<div class="row">
+  <% roomList.forEach(r => { %>
+    <div class="col-md-6 col-12 mb-3">
+      <div class="card h-100">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="card-title mb-1"><%= r.name %></h5>
+            <span class="badge bg-info"><%= r.type %></span>
+          </div>
+          <p class="text-muted small mb-3">Вместимость: <b><%= r.capacity %></b> чел.</p>
+          <% if (isAuthed) { %>
+            <a href="/create?room_id=<%= r.id %>"
+               class="btn btn-sm btn-outline-primary mt-auto">Оставить заявку</a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  <% }) %>
+</div>
+
+<%- include('footer') %>

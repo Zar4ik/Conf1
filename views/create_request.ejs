@@ -1,0 +1,59 @@
+<%- include('header') %>
+
+<%
+  const errs   = (typeof errors !== 'undefined' && Array.isArray(errors)) ? errors : [];
+  const f      = (typeof form !== 'undefined' && form) ? form : {};
+  const rooms_ = Array.isArray(rooms) ? rooms : [];
+  const today  = new Date().toISOString().slice(0, 10);
+  const payments = ['При очном посещении', 'Перевод по СБП'];
+%>
+
+<div class="row justify-content-center">
+  <div class="col-md-8 col-12">
+    <h1 class="mb-4">Новая заявка</h1>
+
+    <% if (errs.length) { %>
+      <div class="alert alert-danger">
+        <% for (const e of errs) { %><div><%= e %></div><% } %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/create">
+      <div class="mb-3">
+        <label class="form-label" for="room_id">Помещение</label>
+        <select class="form-select" id="room_id" name="room_id" required>
+          <option value="" disabled <%= f.room_id ? '' : 'selected' %>>Выберите помещение</option>
+          <% for (const r of rooms_) { %>
+            <option value="<%= r.id %>" <%= String(f.room_id) === String(r.id) ? 'selected' : '' %>>
+              <%= r.type %> — <%= r.name %> (<%= r.capacity %> чел.)
+            </option>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="date_start">Дата начала конференции</label>
+        <input type="date" class="form-control" id="date_start" name="date_start"
+               value="<%= f.date_start || '' %>" min="<%= today %>" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="payment">Способ оплаты</label>
+        <select class="form-select" id="payment" name="payment" required>
+          <option value="" disabled <%= f.payment ? '' : 'selected' %>>Выберите способ оплаты</option>
+          <% for (const p of payments) { %>
+            <option value="<%= p %>" <%= f.payment === p ? 'selected' : '' %>><%= p %></option>
+          <% } %>
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Отправить заявку</button>
+    </form>
+
+    <p class="mt-3 text-center">
+      <a href="/dashboard">Вернуться к моим заявкам</a>
+    </p>
+  </div>
+</div>
+
+<%- include('footer') %>

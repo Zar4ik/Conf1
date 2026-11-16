@@ -1,0 +1,50 @@
+<%
+  const s          = (typeof session !== 'undefined' && session) ? session : {};
+  const isAuthed   = !!s.userId;
+  const isAdminNav = s.login === 'Conf2027';
+%>
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Бронирование помещений</title>
+    <script src="/js/bootstrap.bundle.min.js" defer></script>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/">Conf2027</a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Переключить меню">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" href="/rooms">Помещения</a></li>
+            <% if (isAuthed) { %>
+              <li class="nav-item"><a class="nav-link" href="/dashboard">Мои заявки</a></li>
+              <li class="nav-item"><a class="nav-link" href="/create">Новая заявка</a></li>
+              <% if (isAdminNav) { %>
+                <li class="nav-item"><a class="nav-link" href="/admin">Админка</a></li>
+              <% } %>
+            <% } %>
+          </ul>
+          <ul class="navbar-nav">
+            <% if (isAuthed) { %>
+              <li class="nav-item"><span class="navbar-text me-2"><%= s.fio || s.login %></span></li>
+              <li class="nav-item"><a class="btn btn-outline-secondary btn-sm" href="/logout">Выйти</a></li>
+            <% } else { %>
+              <li class="nav-item"><a class="nav-link" href="/login">Вход</a></li>
+              <li class="nav-item"><a class="btn btn-primary btn-sm ms-1" href="/register">Регистрация</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-4">
